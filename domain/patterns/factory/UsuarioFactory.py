@@ -1,6 +1,4 @@
 """
-usuario_factory.py
-------------------
 PATRÓN: Factory Method (GoF — Creacional)
 
 Problema que resuelve:
@@ -38,27 +36,14 @@ class UsuarioFactory(ABC):
     """
 
     @abstractmethod
-    def crear_usuario(
+    def crearUsuario(
         self,
         nombre: str,
         apellido: str,
         email: str,
-        password_hash: str,
+        passwordHash: str,
         telefono: str | None = None,
     ) -> Usuario:
-        """
-        Crea y retorna una instancia de Usuario configurada según el rol.
-
-        Args:
-            nombre       : Nombre del usuario
-            apellido     : Apellido del usuario
-            email        : Email único (usado para login)
-            password_hash: Contraseña ya hasheada (nunca texto plano)
-            telefono     : Teléfono de contacto (opcional)
-
-        Returns:
-            Usuario: instancia lista para persistir en BD
-        """
         pass
 
     @staticmethod
@@ -77,7 +62,7 @@ class UsuarioFactory(ABC):
         from domain.patterns.factory.EntrenadorFactory import EntrenadorFactory
         from domain.patterns.factory.AdminFactory import AdminFactory
 
-        factories = {
+        factories = dict[str, "UsuarioFactory"]={
             "cliente": ClienteFactory(),
             "entrenador": EntrenadorFactory(),
             "administrador": AdminFactory(),
@@ -86,9 +71,10 @@ class UsuarioFactory(ABC):
         factory = factories.get(rol.lower())
 
         if factory is None:
+            rolesValidos =list(factories.keys())
             raise ValueError(
                 f"Rol '{rol}' no reconocido. "
-                f"Roles válidos: {list(factories.keys())}"
+                f"Roles válidos: {rolesValidos}"
             )
 
         return factory

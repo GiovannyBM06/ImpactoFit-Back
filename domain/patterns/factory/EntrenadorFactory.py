@@ -8,7 +8,7 @@ Responsabilidad:
 
     Un entrenador al momento de su creación:
         - Recibe rol = ENTRENADOR
-        - Queda activo (is_active = True)
+        - Queda activo (isActive = True)
         - NO tiene membresía (los entrenadores no son clientes del gimnasio)
         - NO tiene rutina asignada (ellos crean rutinas, no las reciben)
         - Sus clientes se asignan posteriormente por el administrador
@@ -19,7 +19,7 @@ Responsabilidad:
 """
 
 from domain.entities.Usuario import Usuario
-from domain.enums.rolEnum import RolEnum
+from domain.enums.RolEnum import RolEnum
 from domain.patterns.factory.UsuarioFactory import UsuarioFactory
 
 
@@ -31,7 +31,7 @@ class EntrenadorFactory(UsuarioFactory):
         nombre: str,
         apellido: str,
         email: str,
-        password_hash: str,
+        passwordHash: str,
         telefono: str | None = None,
     ) -> Usuario:
         """
@@ -46,10 +46,10 @@ class EntrenadorFactory(UsuarioFactory):
             nombre=nombre,
             apellido=apellido,
             email=email,
-            password_hash=password_hash,
+            passwordHash=passwordHash,
             telefono=telefono,
             rol=RolEnum.ENTRENADOR,
-            is_active=True,
+            isActive=True,
         )
 
         return usuario

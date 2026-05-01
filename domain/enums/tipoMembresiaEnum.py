@@ -4,7 +4,7 @@ Enumeraciones del dominio de ImpactoFit.
 
 import enum
 
-class MembresíaTipoEnum(str, enum.Enum):
+class TipoMembresiaEnum(str, enum.Enum):
     """Tipos de membresía disponibles."""
     MENSUAL = "mensual"
     TRIMESTRAL = "trimestral"

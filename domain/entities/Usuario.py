@@ -1,15 +1,13 @@
 """
-usuario.py
-----------
 Entidad Usuario. Representa a cualquier persona registrada en el sistema,
 independientemente de su rol (cliente, entrenador, administrador).
 El rol determina qué funcionalidades tiene disponibles.
 """
 
-from sqlalchemy import Column, String, Boolean, Enum
+from sqlalchemy import Column, String, Boolean, Enum, Date
 from sqlalchemy.orm import relationship
 from domain.entities.AuditBase import AuditBase
-from domain.enums.rolEnum import RolEnum
+from domain.enums.RolEnum import RolEnum
 
 
 class Usuario(AuditBase):
@@ -17,33 +15,32 @@ class Usuario(AuditBase):
     Tabla: usuarios
 
     Relaciones:
-        - Un Usuario CLIENTE tiene una Membresía y una Rutina asignada
-        - Un Usuario ENTRENADOR tiene múltiples clientes asignados
-        - Un Usuario puede registrar múltiples Asistencias
-        - Un Usuario puede inscribirse a múltiples ClasesGrupales
+        CLIENTE     → una Membresia, una Rutina asignada, muchas Asistencias,
+                      muchas Inscripciones a ClaseGrupal
+        ENTRENADOR  → muchas Rutinas creadas, muchas ClasesGrupales dictadas
+        ADMIN       → muchos Pagos confirmados
     """
 
     __tablename__ = "usuarios"
 
-    # Datos personales
+
     nombre = Column(String(100), nullable=False)
     apellido = Column(String(100), nullable=False)
+    documento  = Column(String(20), nullable=False)
     email = Column(String(150), unique=True, nullable=False, index=True)
     telefono = Column(String(20), nullable=True)
-
-    # Autenticación
-    password_hash = Column(String(255), nullable=False)
-
-    # Control de acceso
+    fechaNacimiento = Column(Date, nullable=False)
+    #Autenticacion
+    passwordHash = Column(String(255), nullable=False)
+    resetToken = Column(String(255), nullable=True)
+    # Control de Acceso
     rol = Column(Enum(RolEnum), nullable=False, default=RolEnum.CLIENTE)
-    is_active = Column(Boolean, default=True, nullable=False)
+    isActive = Column(Boolean, default=True, nullable=False)
+    
+    
+    #Relaciones 
 
-    # Token para recuperación de contraseña (se genera al solicitarla)
-    reset_token = Column(String(255), nullable=True)
-
-    # ── Relaciones ──────────────────────────────────────────────────────────
-
-    # Un cliente tiene una sola membresía activa a la vez (RN01)
+    # CLIENTE: una membresía activa a la vez (RN01)
     membresia = relationship(
         "Membresia",
         back_populates="usuario",
@@ -54,28 +51,43 @@ class Usuario(AuditBase):
     rutina = relationship(
         "Rutina",
         back_populates="cliente",
-        foreign_keys="Rutina.cliente_id",
+        foreign_keys="Rutina.clienteId",
         uselist=False
     )
 
     # Las rutinas que un entrenador ha creado
-    rutinas_asignadas = relationship(
+    rutinasCreadas = relationship(
         "Rutina",
         back_populates="entrenador",
-        foreign_keys="Rutina.entrenador_id"
+        foreign_keys="Rutina.entrenadorId"
     )
 
-    # Registros de asistencia del usuario
+    # CLIENTE: registros de ingreso al gimnasio
     asistencias = relationship(
         "Asistencia",
         back_populates="usuario"
     )
 
-    # Inscripciones a clases grupales
+    # CLIENTE: inscripciones a clases grupales
     inscripciones = relationship(
         "Inscripcion",
         back_populates="usuario"
     )
+
+    # ENTRENADOR: clases grupales que dicta
+    clasesGrupales = relationship(
+        "ClaseGrupal",
+        back_populates="entrenador",
+        foreign_keys="ClaseGrupal.entrenadorId"
+    )
+
+    # ADMIN: pagos que ha confirmado manualmente
+    pagosConfirmados = relationship(
+        "Pago",
+        back_populates="confirmadoPorAdmin",
+        foreign_keys="Pago.confirmadoPorId"
+    )
+
 
     def __repr__(self):
         return f"<Usuario id={self.id} email={self.email} rol={self.rol}>"

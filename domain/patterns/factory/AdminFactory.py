@@ -22,7 +22,7 @@ Responsabilidad:
 """
 
 from domain.entities.Usuario import Usuario
-from domain.enums.rolEnum import RolEnum
+from domain.enums.RolEnum import RolEnum
 from domain.patterns.factory.UsuarioFactory import UsuarioFactory
 
 
@@ -34,7 +34,7 @@ class AdminFactory(UsuarioFactory):
         nombre: str,
         apellido: str,
         email: str,
-        password_hash: str,
+        passwordHash: str,
         telefono: str | None = None,
     ) -> Usuario:
         """
@@ -48,10 +48,10 @@ class AdminFactory(UsuarioFactory):
             nombre=nombre,
             apellido=apellido,
             email=email,
-            password_hash=password_hash,
+            passwordHash=passwordHash,
             telefono=telefono,
             rol=RolEnum.ADMINISTRADOR,
-            is_active=True,
+            isActive=True,
         )
 
         return usuario

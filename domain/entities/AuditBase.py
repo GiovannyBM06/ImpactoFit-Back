@@ -1,9 +1,5 @@
 """
-audit_base.py
--------------
-Clase base abstracta para todas las entidades del sistema.
-Implementa el principio DRY: define una sola vez los campos comunes
-de auditoría que todas las tablas comparten.
+Clase base abtracta que centraliza los campos comunes a todas la entidades del sistema.
 """
 
 from datetime import datetime
@@ -29,5 +25,5 @@ class AuditBase(Base):
     __abstract__ = True  # SQLAlchemy no creará tabla para esta clase
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=True)
+    createdAt = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updatedAt = Column(DateTime, onupdate=datetime.utcnow, nullable=True)
