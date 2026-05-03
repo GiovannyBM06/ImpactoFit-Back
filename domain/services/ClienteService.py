@@ -3,70 +3,65 @@ clienteService.py
 -----------------
 Implementación del servicio de clientes.
 
-Implementa IClienteService con los casos de uso del MVP para el rol CLIENTE.
+Versión refactorizada para usar el patrón Template Method formal.
 
-Patrón Template Method aplicado:
-    registrarAsistencia e inscribirseAClase comparten el mismo flujo base:
-        1. Validar que el cliente existe y está activo
-        2. Validar que tiene membresía ACTIVA
-        3. Ejecutar la acción específica
-        4. Retornar resultado
+Comparación antes/después:
+    AHORA: el servicio instancia la template correcta y llama a ejecutar().
+           La validación común vive en IRegistroTemplate, no aquí.
+           El servicio solo orquesta qué template usar en cada caso.
 
-    En lugar de duplicar ese flujo, _validarAccesoCliente() centraliza
-    los pasos 1 y 2. Cada método llama a este validador antes de su
-    lógica específica. Es una aplicación simplificada del Template Method
-    sin necesidad de clase abstracta, apropiada para este contexto.
+Responsabilidad del servicio:
+    - Decidir qué template instanciar según la operación
+    - Pasarle los parámetros correctos a ejecutar()
+    - Manejar operaciones que no requieren template (verRutina,
+      obtenerClases, cancelarInscripcion)
 """
 
-from datetime import date
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from domain.entities.Rutina import Rutina
+from domain.entities.Ejecucion import Ejecucion
 from domain.entities.Asistencia import Asistencia
 from domain.entities.ClaseGrupal import ClaseGrupal
 from domain.entities.Inscripcion import Inscripcion
-from domain.enums.EstadoMembresiaEnum import EstadoMembresiaEnum
-from domain.interfaces.repositories.IClienteRepository import IClienteRepository
 from domain.interfaces.services.IClienteService import IClienteService
+from domain.patterns.template.RegistroAsistencia import RegistroAsistencia
+from domain.patterns.template.RegistroInscripcion import RegistroInscripcion
 
 
 class ClienteService(IClienteService):
+    """
+    Servicio de clientes que delega los flujos de registro
+    a las implementaciones concretas del patrón Template Method.
+    """
 
-    def __init__(self, repo: IClienteRepository):
-        self._repo = repo
+    def __init__(self, db: AsyncSession):
+        # El servicio recibe la sesión directamente porque las templates
+        # también la necesitan. No hay repositorio intermediario aquí
+        # dado que las templates acceden a la BD por su cuenta.
+        self._db = db
 
-    # ── Validador compartido (Template Method simplificado) ──────────────────
-
-    async def _validarAccesoCliente(self, clienteId: int) -> None:
-        """
-        Valida que el cliente pueda realizar operaciones en el sistema.
-        Usado como paso común en registrarAsistencia e inscribirseAClase.
-
-        Raises:
-            ValueError: si el cliente no existe, está inactivo
-                        o no tiene membresía activa.
-        """
-        cliente = await self._repo.obtenerPorId(clienteId)
-
-        if cliente is None:
-            raise ValueError(f"No se encontró un cliente con id {clienteId}")
-
-        if not cliente.isActive:
-            raise ValueError("El cliente no está activo en el sistema")
-
-        if cliente.membresia is None:
-            raise ValueError("El cliente no tiene membresía asignada")
-
-        if cliente.membresia.estado != EstadoMembresiaEnum.ACTIVA:
-            raise ValueError(
-                f"La membresía del cliente está en estado "
-                f"'{cliente.membresia.estado}'. "
-                f"Se requiere membresía ACTIVA para realizar esta acción"
-            )
-
-    # ── Casos de uso ─────────────────────────────────────────────────────────
+    # ── Ver rutina ────────────────────────────────────────────────────────────
 
     async def verRutina(self, clienteId: int) -> Rutina:
-        rutina = await self._repo.obtenerRutinaConEjecuciones(clienteId)
+        """
+        Retorna la rutina activa del cliente con sus ejecuciones
+        y ejercicios cargados (eager loading para evitar N+1).
+        """
+        resultado = await self._db.execute(
+            select(Rutina)
+            .where(
+                Rutina.clienteID == clienteId,
+                Rutina.activa == True
+            )
+            .options(
+                selectinload(Rutina.ejecuciones)
+                .selectinload(Ejecucion.ejercicio)
+            )
+        )
+        rutina = resultado.scalar_one_or_none()
 
         if rutina is None:
             raise ValueError(
@@ -76,36 +71,39 @@ class ClienteService(IClienteService):
 
         return rutina
 
+    # ── Registrar asistencia (Template Method) ────────────────────────────────
+
     async def registrarAsistencia(
         self,
         clienteId: int,
         observaciones: str | None = None,
     ) -> Asistencia:
         """
-        Template Method:
-            1. _validarAccesoCliente() → valida existencia y membresía
-            2. Verifica que no haya asistencia registrada hoy
-            3. Crea y persiste el registro
+        Delega al Template Method RegistroAsistencia.
+
+        El flujo completo vive en IRegistroTemplate.ejecutar():
+            1. _validarCliente()    → cliente existe y activo
+            2. _validarMembresia()  → membresía ACTIVA
+            3. _validarEspecifico() → sin asistencia hoy
+            4. _ejecutarAccion()    → persiste Asistencia
         """
-
-        # Paso 1: validación común
-        await self._validarAccesoCliente(clienteId)
-
-        # Paso 2: validación específica de asistencia
-        if await self._repo.tieneAsistenciaHoy(clienteId):
-            raise ValueError("Ya registraste tu asistencia el día de hoy")
-
-        # Paso 3: registrar
-        asistencia = Asistencia(
-            usuarioId=clienteId,
-            fecha=date.today(),
+        template = RegistroAsistencia(self._db)
+        return await template.ejecutar(
+            clienteId=clienteId,
             observaciones=observaciones,
         )
 
-        return await self._repo.registrarAsistencia(asistencia)
+    # ── Clases grupales ───────────────────────────────────────────────────────
 
     async def obtenerClasesDisponibles(self) -> list[ClaseGrupal]:
-        return await self._repo.obtenerClasesDisponibles()
+        resultado = await self._db.execute(
+            select(ClaseGrupal).where(
+                ClaseGrupal.inscripcionesAbiertas == True
+            )
+        )
+        return list(resultado.scalars().all())
+
+    # ── Inscripción a clase (Template Method) ─────────────────────────────────
 
     async def inscribirseAClase(
         self,
@@ -113,50 +111,54 @@ class ClienteService(IClienteService):
         claseId: int,
     ) -> Inscripcion:
         """
-        Template Method:
-            1. _validarAccesoCliente() → valida existencia y membresía
-            2. Verifica que la clase tenga cupo
-            3. Verifica que no esté ya inscrito
-            4. Crea la inscripción
+        Delega al Template Method RegistroInscripcion.
+
+        El flujo completo vive en IRegistroTemplate.ejecutar():
+            1. _validarCliente()    → cliente existe y activo
+            2. _validarMembresia()  → membresía ACTIVA
+            3. _validarEspecifico() → cupo disponible y sin inscripción previa
+            4. _ejecutarAccion()    → persiste Inscripcion y actualiza cupo
         """
-
-        # Paso 1: validación común
-        await self._validarAccesoCliente(clienteId)
-
-        # Paso 2: verificar cupo
-        clases = await self._repo.obtenerClasesDisponibles()
-        clase = next((c for c in clases if c.id == claseId), None)
-
-        if clase is None:
-            raise ValueError(
-                "La clase no existe o no tiene inscripciones abiertas"
-            )
-
-        # Paso 3: verificar inscripción previa
-        inscripcionExistente = await self._repo.obtenerInscripcion(
-            clienteId, claseId
-        )
-        if inscripcionExistente is not None:
-            raise ValueError("Ya estás inscrito en esta clase")
-
-        # Paso 4: crear inscripción
-        inscripcion = Inscripcion(
-            usuarioId=clienteId,
+        template = RegistroInscripcion(self._db)
+        return await template.ejecutar(
+            clienteId=clienteId,
             claseId=claseId,
         )
 
-        return await self._repo.crearInscripcion(inscripcion)
+    # ── Cancelar inscripción ──────────────────────────────────────────────────
 
     async def cancelarInscripcion(
         self,
         clienteId: int,
         claseId: int,
     ) -> Inscripcion:
-        inscripcion = await self._repo.obtenerInscripcion(clienteId, claseId)
+        """
+        Cancela la inscripción activa del cliente a una clase.
+        No requiere template porque no comparte flujo con otras operaciones.
+        """
+        resultado = await self._db.execute(
+            select(Inscripcion).where(
+                Inscripcion.usuarioId == clienteId,
+                Inscripcion.claseId == claseId,
+                Inscripcion.cancelada == False
+            )
+        )
+        inscripcion = resultado.scalar_one_or_none()
 
         if inscripcion is None:
             raise ValueError(
-                "No se encontró una inscripción activa para esta clase"
+                "No se encontró una inscripción activa para esta clase."
             )
 
-        return await self._repo.cancelarInscripcion(inscripcion)
+        # Devolver el cupo a la clase al cancelar
+        clase = await self._db.get(ClaseGrupal, claseId)
+        if clase is not None:
+            clase.cupoActual = max(0, clase.cupoActual - 1)
+            if not clase.inscripcionesAbiertas:
+                clase.inscripcionesAbiertas = True
+
+        inscripcion.cancelada = True
+        await self._db.commit()
+        await self._db.refresh(inscripcion)
+
+        return inscripcion
