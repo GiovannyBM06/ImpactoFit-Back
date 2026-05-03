@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship
 from domain.entities.AuditBase import AuditBase
 from domain.enums.TipoMetricaEnum import TipoMetricaEnum
 
-class Ejecicion(AuditBase):
+class Ejecucion(AuditBase):
 
     __tablename__ = "ejecuciones"
 

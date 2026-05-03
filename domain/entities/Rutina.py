@@ -38,7 +38,7 @@ class Rutina(AuditBase):
         foreign_keys=[entrenadorID]
     )
 
-    ejeciciones = relationship(
+    ejecuciones = relationship(
         "Ejecucion",
         back_populates="rutina",
         cascade= "all, delete-orphan",

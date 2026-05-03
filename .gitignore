@@ -1,0 +1,32 @@
+# Variables de entorno y configuración sensible
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+
+# Archivos de configuración de IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Dependencias
+node_modules/
+vendor/
+
+# Archivos de compilación/build
+dist/
+build/
+out/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
