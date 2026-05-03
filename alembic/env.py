@@ -34,7 +34,6 @@ def runMigrationsOffline():
     with context.begin_transaction():
         context.run_migrations()
 
-
 def runMigrationsOnline():
     connectable = create_async_engine(settings.DATABASE_URL)
 
@@ -44,14 +43,16 @@ def runMigrationsOnline():
                 lambda conn: context.configure(
                     connection=conn,
                     target_metadata=target_metadata,
+                    compare_type=True,
                 )
             )
-            await connection.run_sync(
-                lambda conn: context.run_migrations()
-            )
+            async with connection.begin():
+                await connection.run_sync(
+                    lambda conn: context.run_migrations()
+                )
+        await connectable.dispose()
 
     asyncio.run(run())
-
 
 if context.is_offline_mode():
     runMigrationsOffline()
