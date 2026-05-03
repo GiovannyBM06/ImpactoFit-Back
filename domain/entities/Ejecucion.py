@@ -33,6 +33,6 @@ class Ejecicion(AuditBase):
         )
         return (
             f"<Ejecucion rutinaId={self.rutinaId} "
-            f"ejercicioId={self.ejercicioId} "
+            f"ejercicioId={self.EjercicioId} "
             f"{self.series}x{metrica}>"
         )

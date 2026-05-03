@@ -18,10 +18,10 @@ class Inscripcion(AuditBase):
             "usuarioId",
             "claseId",
             name="uq_inscripcion_usuario_clase"
-        )
+        ),
     )
     usuarioId = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
-    claseId = Column(Integer, ForeignKey("clases_grupales.id"), nullable=False)
+    claseId = Column(Integer, ForeignKey("clasesGrupales.id"), nullable=False)
     fechaInscripcion = Column(DateTime, nullable=False, default=datetime.utcnow)
     cancelada = Column(Boolean, default=False, nullable=False)
 

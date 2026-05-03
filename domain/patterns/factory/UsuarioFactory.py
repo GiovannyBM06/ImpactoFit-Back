@@ -47,7 +47,7 @@ class UsuarioFactory(ABC):
         pass
 
     @staticmethod
-    def obtener_factory(rol: str) -> "UsuarioFactory":
+    def obtenerFactory(rol: str) -> "UsuarioFactory":
         """
         Método auxiliar: retorna la factory correcta según el rol recibido.
 

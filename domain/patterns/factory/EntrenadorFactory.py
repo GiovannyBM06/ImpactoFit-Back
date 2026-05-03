@@ -26,7 +26,7 @@ from domain.patterns.factory.UsuarioFactory import UsuarioFactory
 class EntrenadorFactory(UsuarioFactory):
     """Factory concreta para crear usuarios con rol ENTRENADOR."""
 
-    def crear_usuario(
+    def crearUsuario(
         self,
         nombre: str,
         apellido: str,

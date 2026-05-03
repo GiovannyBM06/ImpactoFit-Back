@@ -5,8 +5,8 @@ Entidad Membresía. Representa el plan activo de un cliente.
 from sqlalchemy import Column, Integer, ForeignKey, Date, Enum, String, Boolean
 from sqlalchemy.orm import relationship
 from domain.entities.AuditBase import AuditBase
-from domain.enums import TipoMembresiaEnum , EstadoMembresiaEnum
-
+from domain.enums.EstadoMembresiaEnum import EstadoMembresiaEnum
+from domain.enums.TipoMembresiaEnum import TipoMembresiaEnum
 class Membresia(AuditBase):
     """
     Tabla: membresias
@@ -19,7 +19,7 @@ class Membresia(AuditBase):
     estado = Column(
         Enum(EstadoMembresiaEnum),
         nullable=False,
-        default=EstadoMembresiaEnum.EstadoMembresiaEnum.PENDIENTE
+        default=EstadoMembresiaEnum.PENDIENTE
     )
     fechaInicio = Column(Date, nullable=True)
     fechaVencimiento = Column(Date, nullable=True)

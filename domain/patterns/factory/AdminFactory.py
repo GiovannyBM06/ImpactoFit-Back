@@ -29,7 +29,7 @@ from domain.patterns.factory.UsuarioFactory import UsuarioFactory
 class AdminFactory(UsuarioFactory):
     """Factory concreta para crear usuarios con rol ADMINISTRADOR."""
 
-    def crear_usuario(
+    def crearUsuario(
         self,
         nombre: str,
         apellido: str,

@@ -1,0 +1,20 @@
+# requirements.txt
+# -----------------
+# Instalar con: pip install -r requirements.txt
+
+# Framework web
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+
+# Base de datos
+sqlalchemy==2.0.36
+asyncpg==0.29.0           # driver PostgreSQL asíncrono (reemplaza psycopg2-binary)
+alembic==1.13.3           # migraciones de BD
+
+# Configuración y variables de entorno
+python-dotenv==1.0.1
+pydantic-settings==2.5.2
+
+# Autenticación
+passlib[bcrypt]==1.7.4    # hasheo de contraseñas
+python-jose[cryptography]==3.3.0  # JWT
