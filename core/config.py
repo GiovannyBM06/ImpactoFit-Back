@@ -34,6 +34,13 @@ class Settings(BaseSettings):
     # La URL completa se obtiene en: NeonDB Dashboard → Connection Details
     DATABASE_URL: str
 
+    # ── Email (SMTP) ──────────────────────────────────────────────────────────
+    MAIL_USERNAME: str
+    MAIL_PASSWORD: str
+    MAIL_FROM: str
+    MAIL_PORT: int = 587
+    MAIL_SERVER: str = "smtp.gmail.com"
+
     # ── JWT ──────────────────────────────────────────────────────────────────
     # Clave secreta para firmar los tokens. Debe ser larga y aleatoria.
     # Generar con: openssl rand -hex 32
@@ -48,7 +55,8 @@ class Settings(BaseSettings):
     # ── Aplicación ────────────────────────────────────────────────────────────
     APP_NAME: str = "ImpactoFit API"
     DEBUG: bool = False
-
+    
+    FRONTEND_URL: str = "http://localhost:3000"
 
 # Instancia única — se importa en toda la aplicación
 # Singleton implícito: Python cachea los módulos, por lo que
