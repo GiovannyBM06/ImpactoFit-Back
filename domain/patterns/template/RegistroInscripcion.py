@@ -19,7 +19,8 @@ El flujo completo al llamar ejecutar():
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from domain.entities.ClaseGrupal import ClaseGrupal, Inscripcion
+from domain.entities.ClaseGrupal import ClaseGrupal
+from domain.entities.Inscripcion import Inscripcion
 from domain.patterns.template.IRegistroTemplate import IRegistroTemplate
 
 

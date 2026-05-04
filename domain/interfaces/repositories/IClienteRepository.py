@@ -12,7 +12,8 @@ from abc import abstractmethod
 from domain.entities.Usuario import Usuario
 from domain.entities.Rutina import Rutina
 from domain.entities.Asistencia import Asistencia
-from domain.entities.ClaseGrupal import ClaseGrupal, Inscripcion
+from domain.entities.ClaseGrupal import ClaseGrupal
+from domain.entities.Inscripcion import Inscripcion
 from domain.interfaces.repositories.IGenericRepository import IGenericRepository
 
 

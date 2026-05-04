@@ -13,7 +13,8 @@ Define los casos de uso del MVP correspondientes al rol CLIENTE:
 from abc import ABC, abstractmethod
 from domain.entities.Rutina import Rutina
 from domain.entities.Asistencia import Asistencia
-from domain.entities.ClaseGrupal import ClaseGrupal, Inscripcion
+from domain.entities.ClaseGrupal import ClaseGrupal
+from domain.entities.Inscripcion import Inscripcion
 
 
 class IClienteService(ABC):

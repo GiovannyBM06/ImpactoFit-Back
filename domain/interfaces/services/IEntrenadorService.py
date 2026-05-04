@@ -12,7 +12,8 @@ Casos de uso del MVP para el rol ENTRENADOR:
 """
 
 from abc import ABC, abstractmethod
-from domain.entities.Rutina import Rutina, Ejecucion
+from domain.entities.Rutina import Rutina
+from domain.entities.Ejecucion import  Ejecucion
 from domain.entities.Usuario import Usuario
 
 

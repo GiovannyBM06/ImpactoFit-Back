@@ -6,7 +6,8 @@ Interfaz del repositorio de entrenadores.
 
 from abc import abstractmethod
 from domain.entities.Usuario import Usuario
-from domain.entities.Rutina import Rutina, Ejecucion
+from domain.entities.Rutina import Rutina
+from domain.entities.Ejecucion import Ejecucion
 from domain.interfaces.repositories.IGenericRepository import IGenericRepository
 
 
