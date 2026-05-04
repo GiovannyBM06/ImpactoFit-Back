@@ -23,6 +23,9 @@ from fastapi.responses import JSONResponse
 from core.config import settings
 from api.controllers.AuthController import router as authRouter
 from api.controllers.UsuarioController import router as usuarioRouter
+from api.controllers.ClienteController import router as clienteRouter
+from api.controllers.EntrenadorController import router as entrenadorRouter
+from api.controllers.AdminController import router as adminRouter
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -66,7 +69,9 @@ async def globalExceptionHandler(request: Request, exc: Exception):
 
 app.include_router(authRouter)
 app.include_router(usuarioRouter)
-
+app.include_router(clienteRouter)
+app.include_router(entrenadorRouter)
+app.include_router(adminRouter)
 
 # ── Health check ──────────────────────────────────────────────────────────────
 
