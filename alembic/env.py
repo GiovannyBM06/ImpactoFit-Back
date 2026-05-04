@@ -1,8 +1,13 @@
+import sys
+import os
 import asyncio
 from logging.config import fileConfig
 
 from sqlalchemy.ext.asyncio import create_async_engine
 from alembic import context
+
+# Agregar raíz del proyecto al path para que los imports funcionen
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.config import settings
 from domain.entities.AuditBase import Base
@@ -11,18 +16,18 @@ from domain.entities.AuditBase import Base
 from domain.entities.Usuario import Usuario
 from domain.entities.Membresia import Membresia
 from domain.entities.Pago import Pago
-from domain.entities.ClaseGrupal import ClaseGrupal
 from domain.entities.Ejercicio import Ejercicio
 from domain.entities.Rutina import Rutina
+from domain.entities.Ejecucion import Ejecucion
 from domain.entities.Asistencia import Asistencia
+from domain.entities.ClaseGrupal import ClaseGrupal 
 from domain.entities.Inscripcion import Inscripcion
-from domain.entities.Ejecucion import Ejecicion
+
 config = context.config
-fileConfig(config.config_file_name)
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
 
-# Le dice a Alembic qué modelos debe observar para generar migraciones
 target_metadata = Base.metadata
-
 
 def runMigrationsOffline():
     context.configure(
@@ -33,6 +38,7 @@ def runMigrationsOffline():
     )
     with context.begin_transaction():
         context.run_migrations()
+
 
 def runMigrationsOnline():
     connectable = create_async_engine(settings.DATABASE_URL)
@@ -53,6 +59,7 @@ def runMigrationsOnline():
         await connectable.dispose()
 
     asyncio.run(run())
+
 
 if context.is_offline_mode():
     runMigrationsOffline()
