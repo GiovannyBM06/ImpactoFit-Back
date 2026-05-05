@@ -27,6 +27,10 @@ class IAdminService(ABC):
         pass
 
     @abstractmethod
+    async def verEntrenadores(self) -> list[Usuario]:
+        pass
+
+    @abstractmethod
     async def verTodasLasMembresias(self) -> list[Membresia]:
         pass
 

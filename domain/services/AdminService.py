@@ -54,6 +54,9 @@ class AdminService(IAdminService):
 
     async def verTodasLasMembresias(self) -> list[Membresia]:
         return await self._repo.obtenerTodasLasMembresias()
+    
+    async def verEntrenadores(self) -> list[Usuario]:
+        return await self._repo.obtenerEntrenadores()
 
     # ── Gestión de membresías ─────────────────────────────────────────────────
 

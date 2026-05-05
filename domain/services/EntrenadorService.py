@@ -20,7 +20,14 @@ class EntrenadorService(IEntrenadorService):
 
     async def verClientesAsignados(self, entrenadorId: int) -> list[Usuario]:
         return await self._repo.obtenerClientesAsignados(entrenadorId)
-
+    
+    async def verRutinaDeCliente(
+        self,
+        entrenadorId: int,
+        clienteId: int,
+    ) -> Rutina | None:
+        return await self._repo.obtenerRutinaDeCliente(clienteId, entrenadorId)
+    
     async def crearRutina(
         self,
         entrenadorId: int,

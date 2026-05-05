@@ -46,18 +46,21 @@ from dataAccess.repositories.UsuarioRepository import UsuarioRepository
 from dataAccess.repositories.EntrenadorRepository import EntrenadorRepository
 from dataAccess.repositories.AdminRepository import AdminRepository
 from dataAccess.repositories.AuthRepository import AuthRepository
+from dataAccess.repositories.EjerciocioRepository import EjercicioRepository
 
 from domain.interfaces.services.IUsuarioService import IUsuarioService
 from domain.interfaces.services.IClienteService import IClienteService
 from domain.interfaces.services.IEntrenadorService import IEntrenadorService
 from domain.interfaces.services.IAdminService import IAdminService
 from domain.interfaces.services.IAuthService import IAuthService
+from domain.interfaces.services.IEjercicioService import IEjercicioService
 
 from domain.services.UsuarioService import UsuarioService
 from domain.services.ClienteService import ClienteService
 from domain.services.EntrenadorService import EntrenadorService
 from domain.services.AdminService import AdminService
 from domain.services.AuthService import AuthService
+from domain.services.EjercicioService import EjercicioService
 
 
 # ── UsuarioService ────────────────────────────────────────────────────────────
@@ -126,3 +129,9 @@ def getAuthService(
     """ 
     repo = AuthRepository(db)
     return AuthService(repo)
+# ── EjerciocioService ───────────────────────────────────────────────────────────────
+def getEjercicioService(
+    db: AsyncSession = Depends(getDb)
+) -> IEjercicioService:
+    repo = EjercicioRepository(db)
+    return EjercicioService(repo)

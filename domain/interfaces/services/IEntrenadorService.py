@@ -25,6 +25,18 @@ class IEntrenadorService(ABC):
         pass
 
     @abstractmethod
+    async def verRutinaDeCliente(
+        self,
+        entrenadorId: int,
+        clienteId: int,
+    ) -> Rutina | None:
+        """
+        Retorna la rutina activa de un cliente verificando que
+        pertenezca a este entrenador. Retorna None si no existe.
+        """
+        pass
+    
+    @abstractmethod
     async def crearRutina(
         self,
         entrenadorId: int,
