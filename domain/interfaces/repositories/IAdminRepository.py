@@ -47,5 +47,9 @@ class IAdminRepository(IGenericRepository[Usuario]):
         pass
 
     @abstractmethod
+    async def obtenerTodasLasClases(self) -> list[ClaseGrupal]:  # ← AGREGAR
+        pass
+    
+    @abstractmethod
     async def obtenerEntrenadores(self) -> list[Usuario]:
         pass

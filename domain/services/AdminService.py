@@ -176,6 +176,11 @@ class AdminService(IAdminService):
         )
 
         return await self._repo.crearClaseGrupal(clase)
+    
+
+    async def verTodasLasClases(self) -> list[ClaseGrupal]:
+        return await self._repo.obtenerTodasLasClases()
+
 
     # ── Gestión de asignaciones ───────────────────────────────────────────────
 

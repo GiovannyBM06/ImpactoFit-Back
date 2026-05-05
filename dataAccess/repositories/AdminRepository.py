@@ -59,6 +59,10 @@ class AdminRepository(GenericRepository[Usuario], IAdminRepository):
 
     async def obtenerClasePorId(self, claseId: int) -> ClaseGrupal | None:
         return await self._db.get(ClaseGrupal, claseId)
+    
+    async def obtenerTodasLasClases(self) -> list[ClaseGrupal]:
+        resultado = await self._db.execute(select(ClaseGrupal))
+        return list(resultado.scalars().all())
 
     async def obtenerEntrenadores(self) -> list[Usuario]:
         resultado = await self._db.execute(

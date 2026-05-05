@@ -149,3 +149,14 @@ async def crearClaseGrupal(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
         )
+    
+@router.get(
+    "/clases",
+    response_model=list[ClaseGrupalResponse],
+    summary="Listar todas las clases grupales",
+)
+async def listarClasesGrupales(
+    _: Usuario = Depends(requireRol(RolEnum.ADMINISTRADOR)),
+    service: IAdminService = Depends(getAdminService),
+):
+    return await service.verTodasLasClases()

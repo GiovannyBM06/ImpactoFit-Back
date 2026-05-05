@@ -83,7 +83,11 @@ class IAdminService(ABC):
         descripcion: str | None = None,
     ) -> ClaseGrupal:
         pass
-
+    
+    @abstractmethod
+    async def verTodasLasClases(self) -> list[ClaseGrupal]:  # ← AGREGAR
+        pass
+    
     @abstractmethod
     async def asignarEntrenador(
         self,
