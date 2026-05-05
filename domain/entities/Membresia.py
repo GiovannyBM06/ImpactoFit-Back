@@ -14,7 +14,7 @@ class Membresia(AuditBase):
 
     __tablename__ = "membresias"
 
-    usuarioID = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
+    usuarioId = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
     tipo = Column(Enum(TipoMembresiaEnum), nullable=False)
     estado = Column(
         Enum(EstadoMembresiaEnum),
@@ -24,7 +24,9 @@ class Membresia(AuditBase):
     fechaInicio = Column(Date, nullable=True)
     fechaVencimiento = Column(Date, nullable=True)
 
+    
     #Relaciones
+    usuario = relationship("Usuario", back_populates="membresia")
     pago = relationship(
         "Pago",
         back_populates="membresia",

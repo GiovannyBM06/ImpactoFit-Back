@@ -43,7 +43,7 @@ class ClienteRepository(GenericRepository[Usuario], IClienteRepository):
         resultado = await self._db.execute(
             select(Rutina)
             .where(
-                Rutina.clienteID == clienteId,
+                Rutina.clienteId == clienteId,
                 Rutina.activa == True
             )
             .options(

@@ -28,9 +28,9 @@ class EntrenadorRepository(GenericRepository[Usuario], IEntrenadorRepository):
         """
         resultado = await self._db.execute(
             select(Usuario)
-            .join(Rutina, Rutina.clienteID == Usuario.id)
+            .join(Rutina, Rutina.clienteId == Usuario.id)
             .where(
-                Rutina.entrenadorID == entrenadorId,
+                Rutina.entrenadorId == entrenadorId,
                 Rutina.activa == True
             )
         )
@@ -42,8 +42,8 @@ class EntrenadorRepository(GenericRepository[Usuario], IEntrenadorRepository):
         resultado = await self._db.execute(
             select(Rutina)
             .where(
-                Rutina.clienteID == clienteId,
-                Rutina.entrenadorID == entrenadorId,
+                Rutina.clienteId == clienteId,
+                Rutina.entrenadorId == entrenadorId,
                 Rutina.activa == True
             )
             .options(

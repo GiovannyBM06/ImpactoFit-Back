@@ -19,6 +19,7 @@ Ejecutar en producción:
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+import domain.entities
 
 from core.config import settings
 from api.controllers.AuthController import router as authRouter
