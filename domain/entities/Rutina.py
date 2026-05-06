@@ -18,8 +18,8 @@ class Rutina(AuditBase):
 
     __tablename__ = "rutinas"
 
-    clienteID = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
-    entrenadorID = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
+    clienteId = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
+    entrenadorId = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
     nombre = Column(String(100), nullable=False)
     descripcion = Column(Text, nullable=True)
     activa = Column(Boolean, default=True, nullable=False)
@@ -29,16 +29,16 @@ class Rutina(AuditBase):
     cliente = relationship(
         "Usuario",
         back_populates="rutina",
-        foreign_keys=[clienteID]
+        foreign_keys=[clienteId]
     )
 
     entrenador = relationship(
         "Usuario",
         back_populates="rutinasCreadas",
-        foreign_keys=[entrenadorID]
+        foreign_keys=[entrenadorId]
     )
 
-    ejeciciones = relationship(
+    ejecuciones = relationship(
         "Ejecucion",
         back_populates="rutina",
         cascade= "all, delete-orphan",

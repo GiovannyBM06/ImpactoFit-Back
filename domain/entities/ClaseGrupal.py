@@ -33,6 +33,11 @@ class ClaseGrupal(AuditBase):
         cascade="all, delete-orphan"
     )
 
+    entrenador = relationship(
+    "Usuario",
+    back_populates="clasesGrupales",  # ← debe coincidir exactamente: clasesGrupales
+    foreign_keys=[entrenadorId]
+    )
     def __repr__(self):
         return (
             f"<ClaseGrupal id={self.id} "
